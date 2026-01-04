@@ -1,0 +1,2112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Evaluación SERUMS - Enfermería I</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --theme-1: #3498db;
+            --theme-2: #2ecc71;
+            --theme-3: #e74c3c;
+            --theme-4: #f39c12;
+            --theme-5: #9b59b6;
+            --theme-6: #1abc9c;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            min-height: 90vh;
+        }
+
+        /* Header Styles */
+        .app-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-header h1 {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px;
+            min-height: 70vh;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* Button Styles */
+        .submit-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+
+        .submit-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .back-btn {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .back-btn:hover {
+            background: #7f8c8d;
+        }
+
+        /* Message Styles */
+        .error-message {
+            background: #fee;
+            color: var(--danger-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: var(--success-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--success-color);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        .info-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .info-box li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .info-box li:before {
+            content: "•";
+            color: var(--secondary-color);
+            font-size: 20px;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Theme Selection */
+        .themes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .theme-card {
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .theme-card.selected {
+            border: 4px solid white;
+            box-shadow: 0 0 0 3px var(--primary-color);
+        }
+
+        .theme-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .theme-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .theme-count {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .theme-card[data-theme="1"] { background: linear-gradient(135deg, var(--theme-1), #2980b9); }
+        .theme-card[data-theme="2"] { background: linear-gradient(135deg, var(--theme-2), #27ae60); }
+        .theme-card[data-theme="3"] { background: linear-gradient(135deg, var(--theme-3), #c0392b); }
+        .theme-card[data-theme="4"] { background: linear-gradient(135deg, var(--theme-4), #d35400); }
+        .theme-card[data-theme="5"] { background: linear-gradient(135deg, var(--theme-5), #8e44ad); }
+        .theme-card[data-theme="6"] { background: linear-gradient(135deg, var(--theme-6), #16a085); }
+
+        /* Question Styles */
+        .question-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            color: var(--secondary-color);
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+
+        .options-container {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-btn:hover {
+            background: #f8f9fa;
+            border-color: var(--secondary-color);
+        }
+
+        .option-btn.selected {
+            background: #e3f2fd;
+            border-color: var(--secondary-color);
+        }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: var(--success-color);
+        }
+
+        .option-btn.incorrect {
+            background: #f8d7da;
+            border-color: var(--danger-color);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .nav-btn.primary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .nav-btn.secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .nav-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #eee;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--secondary-color);
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #7f8c8d;
+        }
+
+        /* Results Styles */
+        .results-container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .results-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .results-header {
+            margin-bottom: 40px;
+        }
+
+        .results-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .stat-box {
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-box.total {
+            background: #e3f2fd;
+        }
+
+        .stat-box.correct {
+            background: #d4edda;
+        }
+
+        .stat-box.incorrect {
+            background: #f8d7da;
+        }
+
+        .stat-box.percentage {
+            background: #fff3cd;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        /* Admin Panel */
+        .admin-container {
+            padding: 20px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .admin-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .approve-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .admin-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .file-input-container {
+            border: 2px dashed #ddd;
+            padding: 40px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+
+        .file-input-container:hover {
+            border-color: var(--secondary-color);
+        }
+
+        /* Theme Management */
+        .theme-management {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .theme-form, .theme-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .theme-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 5px solid;
+        }
+
+        .theme-actions button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .edit-btn {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .results-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .themes-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .theme-management {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-tabs {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>📚 Sistema de Evaluación SERUMS - Enfermería I</h1>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <span id="userName"></span>
+                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </header>
+
+        <main class="main-content" id="mainContent">
+            <!-- Contenido se carga dinámicamente -->
+        </main>
+    </div>
+
+    <script>
+        // ==============================
+        // VARIABLES GLOBALES Y DATOS
+        // ==============================
+
+        let currentUser = null;
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let selectedThemeId = null;
+
+        // Datos iniciales
+        const temasIniciales = [
+            { id: 1, nombre: "Epidemiología", icono: "📊", descripcion: "Estudio de la distribución de enfermedades", color: 1, activo: true },
+            { id: 2, nombre: "Salud Pública", icono: "🏥", descripcion: "Salud comunitaria y prevención", color: 2, activo: true },
+            { id: 3, nombre: "Pediatría", icono: "👶", descripcion: "Salud infantil y crecimiento", color: 3, activo: true },
+            { id: 4, nombre: "Ginecología", icono: "🌸", descripcion: "Salud reproductiva femenina", color: 4, activo: true },
+            { id: 5, nombre: "Farmacología", icono: "💊", descripcion: "Medicamentos y tratamientos", color: 5, activo: true },
+            { id: 6, nombre: "Ética Médica", icono: "⚖️", descripcion: "Principios éticos en salud", color: 6, activo: true }
+        ];
+
+        const preguntasIniciales = [
+            // Epidemiología
+            {
+                id: 1,
+                pregunta: "El jefe de un centro de salud en su análisis situacional evidencia una alta prevalencia de diabetes mellitus; para optimizar el diagnóstico de esta enfermedad. ¿Qué propiedad debe cumplir la prueba de detección a implementar?",
+                opciones: [
+                    "A. Alto valor predictivo positivo",
+                    "B. Alta sensibilidad",
+                    "C. Alta reproducibilidad",
+                    "D. Baja especificidad"
+                ],
+                respuestaCorrecta: "B. Alta sensibilidad",
+                temaId: 1,
+                dificultad: "media"
+            },
+            {
+                id: 2,
+                pregunta: "En una comunidad se desea estudiar la historia natural de una enfermedad. La búsqueda intencionada de casos por parte del personal de salud. ¿A qué tipo de vigilancia corresponde?",
+                opciones: [
+                    "A. Pasiva",
+                    "B. Activa",
+                    "C. Sindrómica",
+                    "D. Centinela"
+                ],
+                respuestaCorrecta: "B. Activa",
+                temaId: 1,
+                dificultad: "baja"
+            },
+            // Salud Pública
+            {
+                id: 3,
+                pregunta: "¿Cuál es una causa directa para el riesgo elevado de brote de enfermedades inmunoprevenibles, en menores de cinco años a nivel nacional?",
+                opciones: [
+                    "A. Acciones de comunicación que son sostenibles en el año",
+                    "B. Viáticos insuficientes para desplazamiento de brigadas",
+                    "C. Disponibilidad de personal calificado y de recursos en las IPRESS del Ministerio de Salud",
+                    "D. Baja cobertura de vacunación, con esquema regular, en los últimos 5 años"
+                ],
+                respuestaCorrecta: "D. Baja cobertura de vacunación, con esquema regular, en los últimos 5 años",
+                temaId: 2,
+                dificultad: "media"
+            },
+            // Pediatría
+            {
+                id: 4,
+                pregunta: "Niño de un año, sin antecedente vacunal, es llevado al centro de salud con T°: 38.6 °C y exantema generalizado no vesicular, el personal que lo atiende lo define como caso sospechoso de sarampión. ¿Cuáles son las acciones inmediatas a tomar?",
+                opciones: [
+                    "A. Toma de muestras a toda la familia y referir al paciente",
+                    "B. Notificación inmediata y bloqueo vacunal",
+                    "C. Investigación y seguimiento de contactos",
+                    "D. Según resultados de laboratorio implementar las medidas de control"
+                ],
+                respuestaCorrecta: "B. Notificación inmediata y bloqueo vacunal",
+                temaId: 3,
+                dificultad: "alta"
+            },
+            {
+                id: 5,
+                pregunta: "En un lactante de 4 meses de edad con ganancia adecuada de peso y hemoglobina de 10.5 g/dl. ¿Cuál es la dosis de suplementación de hierro, como protección específica para la anemia?",
+                opciones: [
+                    "A. Sulfato ferroso con ácido fólico, a dosis de 2 mg/kg de peso por día",
+                    "B. 30 mg de hierro elemental distribuido en dos dosis por día",
+                    "C. Sulfato ferroso o complejo polimaltosado férrico, a dosis de 2 mg/kg de peso por día",
+                    "D. Sulfato ferroso o complejo polimaltosado férrico, a dosis de 3 mg/kg de peso por día"
+                ],
+                respuestaCorrecta: "C. Sulfato ferroso o complejo polimaltosado férrico, a dosis de 2 mg/kg de peso por día",
+                temaId: 3,
+                dificultad: "media"
+            },
+            // Ginecología
+            {
+                id: 6,
+                pregunta: "Las gestantes deben recibir una dosis de vacuna contra influenza. ¿A partir de qué semana de gestación la debe recibir?",
+                opciones: [
+                    "A. 16",
+                    "B. 14",
+                    "C. 20",
+                    "D. 24"
+                ],
+                respuestaCorrecta: "C. 20",
+                temaId: 4,
+                dificultad: "baja"
+            },
+            // Farmacología
+            {
+                id: 7,
+                pregunta: "Con respecto al tratamiento de la Tuberculosis; aquel paciente que ingresa a un nuevo tratamiento luego de haber terminado o cambiado permanentemente a un esquema de tratamiento por fracaso bacteriológico, falla de respuesta clínica y drogo-resistencia. El tratamiento se considera:",
+                opciones: [
+                    "A. Recaída",
+                    "B. Abandono",
+                    "C. Fallido",
+                    "D. Reingreso"
+                ],
+                respuestaCorrecta: "C. Fallido",
+                temaId: 5,
+                dificultad: "alta"
+            },
+            // Ética Médica
+            {
+                id: 8,
+                pregunta: "La frase hipocrática 'primum non nocere' hace referencia al principio ético de:",
+                opciones: [
+                    "A. Veracidad",
+                    "B. Beneficencia",
+                    "C. Autonomía",
+                    "D. No maleficencia"
+                ],
+                respuestaCorrecta: "D. No maleficencia",
+                temaId: 6,
+                dificultad: "baja"
+            }
+        ];
+
+        // ==============================
+        // FUNCIONES DE INICIALIZACIÓN
+        // ==============================
+
+        function initApp() {
+            // Inicializar datos si no existen
+            if (!localStorage.getItem('serums_temas')) {
+                localStorage.setItem('serums_temas', JSON.stringify(temasIniciales));
+            }
+            
+            if (!localStorage.getItem('serums_preguntas')) {
+                localStorage.setItem('serums_preguntas', JSON.stringify(preguntasIniciales));
+            }
+            
+            // Verificar si hay usuario en localStorage
+            const savedUser = localStorage.getItem('serums_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showUserInfo();
+                loadThemeSelection();
+            } else {
+                loadRegisterForm();
+            }
+        }
+
+        function showUserInfo() {
+            const userInfo = document.getElementById('userInfo');
+            const userName = document.getElementById('userName');
+            
+            if (currentUser) {
+                userInfo.style.display = 'flex';
+                userName.textContent = `👤 ${currentUser.nombre}`;
+            }
+        }
+
+        // ==============================
+        // FUNCIONES DE NAVEGACIÓN
+        // ==============================
+
+        function loadRegisterForm() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="register-container">
+                    <div class="card">
+                        <h2>📝 Registro de Usuario</h2>
+                        <p class="subtitle">Registro obligatorio para usar la aplicación</p>
+                        
+                        <form id="registerForm">
+                            <div class="form-group">
+                                <label for="nombre">Nombre Completo *</label>
+                                <input type="text" id="nombre" required placeholder="Ingrese su nombre completo">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="telefono">Número Telefónico *</label>
+                                <input type="tel" id="telefono" required placeholder="Ej: 987654321">
+                                <small>Este será tu usuario para acceder</small>
+                            </div>
+                            
+                            <div id="registerError" class="error-message" style="display: none;"></div>
+                            
+                            <button type="submit" class="submit-btn">Registrarse</button>
+                            
+                            <p class="terms" style="margin-top: 20px; text-align: center; color: #666;">
+                                Al registrarte, aceptas nuestros términos y condiciones.
+                            </p>
+                        </form>
+                        
+                        <div class="info-box">
+                            <h3>💡 Información Importante</h3>
+                            <ul>
+                                <li>El registro es obligatorio antes de usar la aplicación</li>
+                                <li>Necesitarás realizar un pago de S/5.00 para acceso completo</li>
+                                <li>Podrás elegir entre diferentes temas de Enfermería</li>
+                                <li>Tendrás 5 intentos para usar el banco de preguntas</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+        }
+
+        function loadThemeSelection() {
+            if (!currentUser.pago_aprobado) {
+                loadPaymentForm();
+                return;
+            }
+            
+            const temas = JSON.parse(localStorage.getItem('serums_temas')).filter(t => t.activo);
+            const preguntas = JSON.parse(localStorage.getItem('serums_preguntas'));
+            
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="card">
+                    <h2>📚 Selecciona un Tema</h2>
+                    <p class="subtitle">Elige el tema sobre el que deseas ser evaluado</p>
+                    
+                    <div class="themes-container" id="themesContainer">
+                        ${temas.map(tema => {
+                            const preguntasTema = preguntas.filter(p => p.temaId === tema.id);
+                            return `
+                                <div class="theme-card" data-theme="${tema.color}" data-id="${tema.id}" onclick="selectTheme(${tema.id})">
+                                    <div class="theme-icon">${tema.icono}</div>
+                                    <div class="theme-title">${tema.nombre}</div>
+                                    <p style="font-size: 14px; opacity: 0.9; margin-bottom: 15px;">${tema.descripcion}</p>
+                                    <div class="theme-count">${preguntasTema.length} preguntas</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <div id="selectedThemeInfo" style="display: none; margin-top: 30px;">
+                        <div class="info-box">
+                            <h3 id="selectedThemeName"></h3>
+                            <p id="selectedThemeDesc"></p>
+                            <p><strong>Preguntas disponibles:</strong> <span id="questionCount">0</span></p>
+                            <button class="submit-btn" onclick="startQuiz()" style="margin-top: 20px;">▶️ Comenzar Evaluación</button>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box">
+                        <h3>📋 Instrucciones:</h3>
+                        <ul>
+                            <li>Selecciona un tema haciendo clic en la tarjeta correspondiente</li>
+                            <li>Cada tema contiene preguntas específicas sobre ese área</li>
+                            <li>Podrás cambiar de tema después de cada evaluación</li>
+                            <li>Intentos restantes: <strong>${currentUser.intentos_restantes}</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectTheme(themeId) {
+            selectedThemeId = themeId;
+            
+            // Remover selección previa
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Agregar selección actual
+            const selectedCard = document.querySelector(`[data-id="${themeId}"]`);
+            selectedCard.classList.add('selected');
+            
+            // Mostrar información del tema seleccionado
+            const temas = JSON.parse(localStorage.getItem('serums_temas'));
+            const tema = temas.find(t => t.id === themeId);
+            const preguntas = JSON.parse(localStorage.getItem('serums_preguntas'));
+            const preguntasTema = preguntas.filter(p => p.temaId === themeId);
+            
+            const infoDiv = document.getElementById('selectedThemeInfo');
+            infoDiv.style.display = 'block';
+            
+            document.getElementById('selectedThemeName').textContent = `${tema.icono} ${tema.nombre}`;
+            document.getElementById('selectedThemeDesc').textContent = tema.descripcion;
+            document.getElementById('questionCount').textContent = preguntasTema.length;
+        }
+
+        function startQuiz() {
+            if (!selectedThemeId) {
+                alert('Por favor, selecciona un tema primero');
+                return;
+            }
+            
+            if (currentUser.intentos_restantes <= 0) {
+                alert('No tienes intentos disponibles. Debes realizar un nuevo pago.');
+                currentUser.pago_aprobado = false;
+                saveUserData();
+                loadPaymentForm();
+                return;
+            }
+            
+            // Reducir intentos
+            currentUser.intentos_restantes--;
+            saveUserData();
+            
+            // Cargar preguntas del tema seleccionado
+            const preguntas = JSON.parse(localStorage.getItem('serums_preguntas'));
+            const preguntasTema = preguntas.filter(p => p.temaId === selectedThemeId);
+            
+            if (preguntasTema.length === 0) {
+                alert('Este tema no tiene preguntas disponibles. Por favor, selecciona otro tema.');
+                return;
+            }
+            
+            // Mezclar preguntas y limitar a 10 para la evaluación
+            currentQuestions = preguntasTema.sort(() => Math.random() - 0.5).slice(0, Math.min(10, preguntasTema.length));
+            userAnswers = new Array(currentQuestions.length).fill(null);
+            currentQuestionIndex = 0;
+            
+            loadQuestionInterface();
+        }
+
+        function loadQuestionInterface() {
+            const temas = JSON.parse(localStorage.getItem('serums_temas'));
+            const tema = temas.find(t => t.id === selectedThemeId);
+            
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="question-container">
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress" id="progressBar" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>Tema: <strong>${tema.nombre}</strong> | Pregunta <span id="currentQuestionNum">1</span>/<span id="totalQuestions">${currentQuestions.length}</span></span>
+                            <span>Intentos restantes: ${currentUser.intentos_restantes}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="question-card">
+                        <div class="question-number" id="questionNumber">Pregunta 1</div>
+                        <div class="question-text" id="questionText"></div>
+                        
+                        <div class="options-container" id="optionsContainer"></div>
+                        
+                        <div id="answerFeedback" style="display: none; margin-top: 20px;"></div>
+                        
+                        <div class="navigation-buttons">
+                            <button class="nav-btn secondary" onclick="prevQuestion()" id="prevBtn" disabled>← Anterior</button>
+                            <button class="nav-btn primary" onclick="checkAnswer()" id="checkBtn">Verificar Respuesta</button>
+                            <button class="nav-btn primary" onclick="nextQuestion()" id="nextBtn" style="display: none;">Siguiente →</button>
+                            <button class="nav-btn primary" onclick="showResults()" id="resultsBtn" style="display: none;">Ver Resultados</button>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box">
+                        <h3>💡 Instrucciones:</h3>
+                        <ul>
+                            <li>Selecciona una opción y haz clic en "Verificar Respuesta"</li>
+                            <li>La respuesta correcta se mostrará después de cada pregunta</li>
+                            <li>Puedes navegar entre preguntas con los botones Anterior/Siguiente</li>
+                            <li>Al finalizar, podrás ver tus resultados estadísticos</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            showQuestion(currentQuestionIndex);
+        }
+
+        function loadPaymentForm() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="payment-container">
+                    <div class="card">
+                        <h2>💳 Sistema de Pago</h2>
+                        
+                        <div class="payment-info">
+                            <div class="info-box">
+                                <h3>Instrucciones de Pago:</h3>
+                                <ol>
+                                    <li>Realiza un pago de <strong>S/5.00</strong> a la cuenta bancaria proporcionada</li>
+                                    <li>Sube una imagen clara del comprobante de pago</li>
+                                    <li>Espera la aprobación del administrador (máximo 24 horas)</li>
+                                    <li>Una vez aprobado, recibirás un código de acceso</li>
+                                </ol>
+                            </div>
+                            
+                            <div class="account-details">
+                                <h3>Datos para el pago:</h3>
+                                <table>
+                                    <tr><td>Banco:</td><td><strong>BCP</strong></td></tr>
+                                    <tr><td>Cuenta:</td><td><strong>191-23456789-0-12</strong></td></tr>
+                                    <tr><td>Titular:</td><td><strong>SERUMS EVALUACIONES SAC</strong></td></tr>
+                                    <tr><td>Concepto:</td><td><strong>Usuario: ${currentUser.telefono}</strong></td></tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <form id="paymentForm">
+                            <div class="form-group">
+                                <label for="comprobante">Subir Comprobante de Pago *</label>
+                                <input type="file" id="comprobante" accept="image/*" required>
+                                <small>Formatos aceptados: JPG, PNG, PDF. Máx 5MB</small>
+                            </div>
+                            
+                            <div id="paymentMessage" style="display: none;"></div>
+                            
+                            <button type="submit" class="submit-btn">Enviar Comprobante</button>
+                        </form>
+                        
+                        <div class="payment-status" style="margin-top: 30px;">
+                            <h3>Estado de tu pago:</h3>
+                            <div class="status-badge ${currentUser.pago_aprobado ? 'approved' : 'pending'}">
+                                ${currentUser.pago_aprobado ? '✅ APROBADO' : '⏳ PENDIENTE'}
+                            </div>
+                            ${currentUser.codigo_acceso ? `
+                                <div class="access-code">
+                                    <p>Tu código de acceso: <strong>${currentUser.codigo_acceso}</strong></p>
+                                    <p>Intentos restantes: <strong>${currentUser.intentos_restantes}</strong></p>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="warning-box">
+                            <h4>⚠️ Importante:</h4>
+                            <ul>
+                                <li>Solo tendrás <strong>5 intentos</strong> para usar el banco de preguntas</li>
+                                <li>Al agotar los intentos, deberás realizar otro pago</li>
+                                <li>Guarda tu código de acceso en un lugar seguro</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            if (currentUser.pago_aprobado) {
+                document.getElementById('paymentForm').style.display = 'none';
+            } else {
+                document.getElementById('paymentForm').addEventListener('submit', handlePaymentSubmit);
+            }
+        }
+
+        function loadAdminPanel() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="admin-container">
+                    <h2>🔧 Panel de Administración</h2>
+                    
+                    <div class="admin-tabs">
+                        <button class="tab-btn active" onclick="switchAdminTab('temas')">Gestión de Temas</button>
+                        <button class="tab-btn" onclick="switchAdminTab('preguntas')">Gestión de Preguntas</button>
+                        <button class="tab-btn" onclick="switchAdminTab('pagos')">Pagos Pendientes</button>
+                        <button class="tab-btn" onclick="switchAdminTab('usuarios')">Usuarios</button>
+                        <button class="tab-btn" onclick="switchAdminTab('estadisticas')">Estadísticas</button>
+                    </div>
+                    
+                    <!-- Gestión de Temas -->
+                    <div id="tabTemas" class="tab-content active">
+                        <h3>📚 Gestión de Temas</h3>
+                        <p class="subtitle">Agrega, edita o elimina temas para las evaluaciones</p>
+                        
+                        <div class="theme-management">
+                            <div class="theme-form">
+                                <h4>${window.editingThemeId ? '✏️ Editar Tema' : '➕ Agregar Nuevo Tema'}</h4>
+                                <form id="themeForm">
+                                    <div class="form-group">
+                                        <label for="themeNombre">Nombre del Tema *</label>
+                                        <input type="text" id="themeNombre" required placeholder="Ej: Epidemiología">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="themeDescripcion">Descripción</label>
+                                        <textarea id="themeDescripcion" rows="3" placeholder="Breve descripción del tema"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="themeIcono">Icono</label>
+                                        <select id="themeIcono">
+                                            <option value="📊">📊 Estadística</option>
+                                            <option value="🏥">🏥 Hospital</option>
+                                            <option value="👶">👶 Pediatría</option>
+                                            <option value="🌸">🌸 Ginecología</option>
+                                            <option value="💊">💊 Farmacología</option>
+                                            <option value="⚖️">⚖️ Ética</option>
+                                            <option value="❤️">❤️ Cardiología</option>
+                                            <option value="🧠">🧠 Neurología</option>
+                                            <option value="🦴">🦴 Ortopedia</option>
+                                            <option value="👁️">👁️ Oftalmología</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="themeColor">Color del Tema</label>
+                                        <select id="themeColor">
+                                            <option value="1">Azul</option>
+                                            <option value="2">Verde</option>
+                                            <option value="3">Rojo</option>
+                                            <option value="4">Naranja</option>
+                                            <option value="5">Morado</option>
+                                            <option value="6">Turquesa</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>
+                                            <input type="checkbox" id="themeActivo" checked> Tema activo (visible para usuarios)
+                                        </label>
+                                    </div>
+                                    
+                                    <div style="display: flex; gap: 10px;">
+                                        <button type="submit" class="nav-btn primary">
+                                            ${window.editingThemeId ? '💾 Guardar Cambios' : '➕ Agregar Tema'}
+                                        </button>
+                                        ${window.editingThemeId ? 
+                                            `<button type="button" class="nav-btn secondary" onclick="cancelEditTheme()">Cancelar</button>` : ''}
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <div class="theme-list">
+                                <h4>📋 Temas Disponibles</h4>
+                                <div id="temasList"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gestión de Preguntas -->
+                    <div id="tabPreguntas" class="tab-content">
+                        <h3>❓ Gestión de Preguntas</h3>
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                            <button class="nav-btn primary" onclick="showAddQuestionForm()">➕ Agregar Pregunta</button>
+                            <button class="nav-btn secondary" onclick="refreshQuestions()">🔄 Actualizar Lista</button>
+                        </div>
+                        <div id="addQuestionForm" style="display: none; margin-bottom: 30px;">
+                            ${renderAddQuestionForm()}
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label>Filtrar por tema:</label>
+                            <select id="filterTheme" onchange="filterQuestionsByTheme()">
+                                <option value="">Todos los temas</option>
+                            </select>
+                        </div>
+                        
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Pregunta</th>
+                                    <th>Tema</th>
+                                    <th>Dificultad</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="questionsBody"></tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagos Pendientes -->
+                    <div id="tabPagos" class="tab-content">
+                        <h3>💳 Pagos Pendientes de Aprobación</h3>
+                        <table class="admin-table" id="paymentsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Usuario</th>
+                                    <th>Teléfono</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsBody"></tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Usuarios -->
+                    <div id="tabUsuarios" class="tab-content">
+                        <h3>👥 Usuarios Registrados</h3>
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Teléfono</th>
+                                    <th>Pago Aprobado</th>
+                                    <th>Intentos</th>
+                                    <th>Fecha Registro</th>
+                                    <th>Último Tema</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersBody"></tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Estadísticas -->
+                    <div id="tabEstadisticas" class="tab-content">
+                        <h3>📈 Estadísticas del Sistema</h3>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px;">
+                            <div class="stat-box total" style="text-align: center;">
+                                <div class="stat-value" id="totalUsers">0</div>
+                                <div class="stat-label">Usuarios Registrados</div>
+                            </div>
+                            <div class="stat-box correct" style="text-align: center;">
+                                <div class="stat-value" id="totalQuestions">0</div>
+                                <div class="stat-label">Preguntas Totales</div>
+                            </div>
+                            <div class="stat-box percentage" style="text-align: center;">
+                                <div class="stat-value" id="totalThemes">0</div>
+                                <div class="stat-label">Temas Activos</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 40px;">
+                            <h4>Distribución de Preguntas por Tema</h4>
+                            <div id="questionsByTheme" style="margin-top: 20px;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            loadAdminData();
+        }
+
+        // ==============================
+        // FUNCIONES DE MANEJO DE DATOS
+        // ==============================
+
+        function handleRegister(event) {
+            event.preventDefault();
+            
+            const nombre = document.getElementById('nombre').value;
+            const telefono = document.getElementById('telefono').value;
+            
+            if (!nombre || !telefono) {
+                showError('registerError', 'Todos los campos son obligatorios');
+                return;
+            }
+            
+            // Verificar si el usuario ya existe
+            const users = JSON.parse(localStorage.getItem('serums_users') || '[]');
+            const existingUser = users.find(u => u.telefono === telefono);
+            
+            if (existingUser) {
+                currentUser = existingUser;
+            } else {
+                // Crear nuevo usuario
+                currentUser = {
+                    id: Date.now(),
+                    nombre: nombre,
+                    telefono: telefono,
+                    pago_aprobado: false,
+                    codigo_acceso: null,
+                    intentos_restantes: 5,
+                    fecha_registro: new Date().toISOString(),
+                    ultimo_tema: null,
+                    evaluaciones_completadas: 0
+                };
+                
+                users.push(currentUser);
+                localStorage.setItem('serums_users', JSON.stringify(users));
+            }
+            
+            saveUserData();
+            showUserInfo();
+            loadPaymentForm();
+        }
+
+        function handlePaymentSubmit(event) {
+            event.preventDefault();
+            
+            const comprobante = document.getElementById('comprobante').files[0];
+            if (!comprobante) {
+                alert('Por favor, selecciona un comprobante de pago');
+                return;
+            }
+            
+            // Simular envío de comprobante
+            const payments = JSON.parse(localStorage.getItem('serums_payments') || '[]');
+            payments.push({
+                id: Date.now(),
+                user_id: currentUser.id,
+                nombre: currentUser.nombre,
+                telefono: currentUser.telefono,
+                fecha: new Date().toISOString(),
+                estado: 'pendiente'
+            });
+            
+            localStorage.setItem('serums_payments', JSON.stringify(payments));
+            
+            alert('✅ Comprobante enviado exitosamente. Espera la aprobación del administrador.');
+            document.getElementById('paymentForm').reset();
+        }
+
+        // ==============================
+        // FUNCIONES DEL SISTEMA DE PREGUNTAS
+        // ==============================
+
+        function showQuestion(index) {
+            if (index < 0 || index >= currentQuestions.length) return;
+            
+            currentQuestionIndex = index;
+            const question = currentQuestions[index];
+            
+            document.getElementById('questionNumber').textContent = `Pregunta ${index + 1}`;
+            document.getElementById('currentQuestionNum').textContent = index + 1;
+            document.getElementById('questionText').textContent = question.pregunta;
+            
+            // Actualizar barra de progreso
+            const progress = ((index + 1) / currentQuestions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            
+            // Renderizar opciones
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.opciones.forEach((opcion, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                if (userAnswers[index] === opcion) {
+                    btn.classList.add('selected');
+                }
+                btn.textContent = opcion;
+                btn.onclick = () => selectOption(opcion);
+                optionsContainer.appendChild(btn);
+            });
+            
+            // Configurar botones de navegación
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('checkBtn').style.display = userAnswers[index] ? 'none' : 'block';
+            document.getElementById('nextBtn').style.display = userAnswers[index] ? 'block' : 'none';
+            document.getElementById('resultsBtn').style.display = 'none';
+            
+            // Ocultar feedback
+            document.getElementById('answerFeedback').style.display = 'none';
+        }
+
+        function selectOption(opcion) {
+            // Remover selección previa
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.textContent === opcion) {
+                    btn.classList.add('selected');
+                }
+            });
+            
+            // Guardar respuesta
+            userAnswers[currentQuestionIndex] = opcion;
+            
+            // Mostrar botón siguiente
+            document.getElementById('checkBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function checkAnswer() {
+            if (!userAnswers[currentQuestionIndex]) {
+                alert('Por favor, selecciona una opción');
+                return;
+            }
+            
+            const question = currentQuestions[currentQuestionIndex];
+            const userAnswer = userAnswers[currentQuestionIndex];
+            const isCorrect = userAnswer === question.respuestaCorrecta;
+            
+            // Mostrar feedback
+            const feedback = document.getElementById('answerFeedback');
+            feedback.style.display = 'block';
+            feedback.innerHTML = `
+                <div class="${isCorrect ? 'success-message' : 'error-message'}">
+                    ${isCorrect ? '✅ ¡Respuesta Correcta!' : '❌ Respuesta Incorrecta'}
+                    <br><br>
+                    <strong>Respuesta correcta:</strong> ${question.respuestaCorrecta}
+                    ${!isCorrect ? `<br><strong>Tu respuesta:</strong> ${userAnswer}` : ''}
+                </div>
+            `;
+            
+            // Resaltar opciones correctas/incorrectas
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                if (btn.textContent === question.respuestaCorrecta) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === userAnswer && !isCorrect) {
+                    btn.classList.add('incorrect');
+                }
+                btn.onclick = null; // Desactivar clics después de verificar
+            });
+            
+            // Mostrar botón siguiente
+            document.getElementById('checkBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'block';
+            
+            // Si es la última pregunta, mostrar botón de resultados
+            if (currentQuestionIndex === currentQuestions.length - 1) {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('resultsBtn').style.display = 'block';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                showQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                showQuestion(currentQuestionIndex + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            // Calcular estadísticas
+            let correctas = 0;
+            let incorrectas = 0;
+            
+            currentQuestions.forEach((question, index) => {
+                if (userAnswers[index] === question.respuestaCorrecta) {
+                    correctas++;
+                } else {
+                    incorrectas++;
+                }
+            });
+            
+            const total = currentQuestions.length;
+            const porcentaje = total > 0 ? ((correctas / total) * 100).toFixed(2) : 0;
+            
+            // Actualizar estadísticas del usuario
+            currentUser.ultimo_tema = selectedThemeId;
+            currentUser.evaluaciones_completadas = (currentUser.evaluaciones_completadas || 0) + 1;
+            saveUserData();
+            
+            // Obtener nombre del tema
+            const temas = JSON.parse(localStorage.getItem('serums_temas'));
+            const tema = temas.find(t => t.id === selectedThemeId);
+            
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="results-container">
+                    <div class="results-card">
+                        <div class="results-header">
+                            <div class="results-icon">📊</div>
+                            <h2>Resultados Finales</h2>
+                            <p class="subtitle">Evaluación completada - Tema: ${tema.nombre}</p>
+                        </div>
+                        
+                        <div class="results-stats">
+                            <div class="stat-box total">
+                                <div class="stat-value">${total}</div>
+                                <div class="stat-label">Total Preguntas</div>
+                            </div>
+                            
+                            <div class="stat-box correct">
+                                <div class="stat-value">${correctas}</div>
+                                <div class="stat-label">Correctas</div>
+                            </div>
+                            
+                            <div class="stat-box incorrect">
+                                <div class="stat-value">${incorrectas}</div>
+                                <div class="stat-label">Incorrectas</div>
+                            </div>
+                            
+                            <div class="stat-box percentage">
+                                <div class="stat-value">${porcentaje}%</div>
+                                <div class="stat-label">Porcentaje de Aciertos</div>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="nav-btn primary" onclick="loadThemeSelection()">📚 Elegir Otro Tema</button>
+                            <button class="nav-btn secondary" onclick="loadPaymentForm()">💳 Ver Estado de Pago</button>
+                            <button class="nav-btn secondary" onclick="logout()">🏠 Salir</button>
+                        </div>
+                        
+                        <div class="info-box" style="margin-top: 30px;">
+                            <h3>📈 Análisis de Resultados:</h3>
+                            <ul>
+                                ${porcentaje >= 70 ? 
+                                    '<li>🎉 ¡Excelente trabajo! Tu rendimiento es sobresaliente</li>' : 
+                                    porcentaje >= 50 ?
+                                    '<li>👍 Buen intento, pero hay áreas que puedes mejorar</li>' :
+                                    '<li>📚 Te recomendamos repasar este tema antes de intentar nuevamente</li>'
+                                }
+                                <li>Intentos restantes: ${currentUser.intentos_restantes}</li>
+                                <li>Evaluaciones completadas: ${currentUser.evaluaciones_completadas || 0}</li>
+                                ${currentUser.intentos_restantes <= 1 ? 
+                                    '<li>⚠️ Te queda 1 intento. Considera realizar otro pago si necesitas más intentos</li>' : 
+                                    ''
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==============================
+        // FUNCIONES DEL PANEL DE ADMIN
+        // ==============================
+
+        function loadAdminData() {
+            // Cargar temas
+            const temas = JSON.parse(localStorage.getItem('serums_temas'));
+            const temasList = document.getElementById('temasList');
+            
+            if (temasList) {
+                temasList.innerHTML = temas.map(tema => `
+                    <div class="theme-item" style="border-left-color: var(--theme-${tema.color});">
+                        <div>
+                            <strong>${tema.icono} ${tema.nombre}</strong>
+                            <br>
+                            <small>${tema.descripcion}</small>
+                            <br>
+                            <small>${tema.activo ? '✅ Activo' : '❌ Inactivo'}</small>
+                        </div>
+                        <div class="theme-actions">
+                            <button class="edit-btn" onclick="editTheme(${tema.id})">✏️</button>
+                            <button class="delete-btn" onclick="deleteTheme(${tema.id})">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Cargar filtro de temas para preguntas
+            const filterTheme = document.getElementById('filterTheme');
+            if (filterTheme) {
+                filterTheme.innerHTML = '<option value="">Todos los temas</option>' + 
+                    temas.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('');
+            }
+            
+            // Cargar preguntas
+            const preguntas = JSON.parse(localStorage.getItem('serums_preguntas'));
+            const questionsBody = document.getElementById('questionsBody');
+            
+            if (questionsBody) {
+                const filteredPreguntas = window.filteredThemeId ? 
+                    preguntas.filter(p => p.temaId == window.filteredThemeId) : 
+                    preguntas;
+                
+                questionsBody.innerHTML = filteredPreguntas.map(q => {
+                    const tema = temas.find(t => t.id === q.temaId);
+                    return `
+                        <tr>
+                            <td>${q.id}</td>
+                            <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${q.pregunta}</td>
+                            <td>${tema ? tema.nombre : 'Sin tema'}</td>
+                            <td>
+                                <span style="background: ${q.dificultad === 'alta' ? '#e74c3c' : q.dificultad === 'media' ? '#f39c12' : '#27ae60'}; 
+                                      color: white; padding: 3px 8px; border-radius: 3px; font-size: 12px;">
+                                    ${q.dificultad || 'media'}
+                                </span>
+                            </td>
+                            <td>
+                                <button style="background: var(--danger-color); color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-right: 5px;" 
+                                        onclick="deleteQuestion(${q.id})">
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            // Cargar pagos pendientes
+            const payments = JSON.parse(localStorage.getItem('serums_payments') || '[]');
+            const paymentsBody = document.getElementById('paymentsBody');
+            
+            if (paymentsBody) {
+                paymentsBody.innerHTML = payments.filter(p => p.estado === 'pendiente')
+                    .map(payment => `
+                        <tr>
+                            <td>${payment.id}</td>
+                            <td>${payment.nombre}</td>
+                            <td>${payment.telefono}</td>
+                            <td>${new Date(payment.fecha).toLocaleDateString()}</td>
+                            <td>
+                                <button class="approve-btn" onclick="approvePayment(${payment.id}, ${payment.user_id})">Aprobar</button>
+                            </td>
+                        </tr>
+                    `).join('');
+            }
+            
+            // Cargar usuarios
+            const users = JSON.parse(localStorage.getItem('serums_users') || '[]');
+            const usersBody = document.getElementById('usersBody');
+            
+            if (usersBody) {
+                usersBody.innerHTML = users.map(u => {
+                    const ultimoTema = u.ultimo_tema ? temas.find(t => t.id === u.ultimo_tema) : null;
+                    return `
+                        <tr>
+                            <td>${u.nombre}</td>
+                            <td>${u.telefono}</td>
+                            <td>${u.pago_aprobado ? '✅ Sí' : '❌ No'}</td>
+                            <td>${u.intentos_restantes}</td>
+                            <td>${new Date(u.fecha_registro).toLocaleDateString()}</td>
+                            <td>${ultimoTema ? ultimoTema.nombre : 'Ninguno'}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            // Cargar estadísticas
+            const totalUsers = document.getElementById('totalUsers');
+            const totalQuestions = document.getElementById('totalQuestions');
+            const totalThemes = document.getElementById('totalThemes');
+            const questionsByTheme = document.getElementById('questionsByTheme');
+            
+            if (totalUsers) {
+                totalUsers.textContent = users.length;
+            }
+            
+            if (totalQuestions) {
+                totalQuestions.textContent = preguntas.length;
+            }
+            
+            if (totalThemes) {
+                totalThemes.textContent = temas.filter(t => t.activo).length;
+            }
+            
+            if (questionsByTheme) {
+                const temasConPreguntas = temas.map(tema => {
+                    const count = preguntas.filter(p => p.temaId === tema.id).length;
+                    return { ...tema, count };
+                });
+                
+                questionsByTheme.innerHTML = temasConPreguntas.map(t => `
+                    <div style="margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>${t.icono} ${t.nombre}</span>
+                            <span>${t.count} preguntas</span>
+                        </div>
+                        <div style="height: 10px; background: #eee; border-radius: 5px; overflow: hidden;">
+                            <div style="height: 100%; width: ${(t.count / Math.max(...temasConPreguntas.map(t => t.count)) * 100)}%; 
+                                 background: var(--theme-${t.color});"></div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Configurar formulario de temas
+            const themeForm = document.getElementById('themeForm');
+            if (themeForm && !themeForm.hasEventListener) {
+                themeForm.addEventListener('submit', handleThemeFormSubmit);
+                themeForm.hasEventListener = true;
+            }
+        }
+
+        function switchAdminTab(tabName) {
+            // Ocultar todos los tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Desactivar todos los botones
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Activar tab seleccionado
+            const tabId = `tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`;
+            const tabElement = document.getElementById(tabId);
+            if (tabElement) {
+                tabElement.classList.add('active');
+            }
+            
+            // Activar botón correspondiente
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            // Recargar datos
+            loadAdminData();
+        }
+
+        // ==============================
+        // GESTIÓN DE TEMAS
+        // ==============================
+
+        function handleThemeFormSubmit(event) {
+            event.preventDefault();
+            
+            const nombre = document.getElementById('themeNombre').value;
+            const descripcion = document.getElementById('themeDescripcion').value;
+            const icono = document.getElementById('themeIcono').value;
+            const color = document.getElementById('themeColor').value;
+            const activo = document.getElementById('themeActivo').checked;
+            
+            if (!nombre) {
+                alert('El nombre del tema es obligatorio');
+                return;
+            }
+            
+            const temas = JSON.parse(localStorage.getItem('serums_temas'));
+            
+            if (window.editingThemeId) {
+                // Editar tema existente
+                const index = temas.findIndex(t => t.id === window.editingThemeId);
+                if (index !== -1) {
+                    temas[index] = {
+                        ...temas[index],
+                        nombre,
+                        descripcion,
+                        icono,
+                        color: parseInt(color),
+                        activo
+                    };
+                }
+                delete window.editingThemeId;
+            } else {
+                // Agregar nuevo tema
+                const nuevoTema = {
+                    id: Date.now(),
+                    nombre,
+                    descripcion,
+                    icono,
+                    color: parseInt(color),
+                    activo
+                };
+                temas.push(nuevoTema);
+            }
+            
+            localStorage.setItem('serums_temas', JSON.stringify(temas));
+            alert('✅ Tema guardado exitosamente');
+            
+            // Limpiar formulario
+            document.getElementById('themeForm').reset();
+            loadAdminData();
+        }
+
+        function editTheme(themeId) {
+            const temas = JSON.parse(localStorage.getItem('serums_temas'));
+            const tema = temas.find(t => t.id === themeId);
+            
+            if (!tema) return;
+            
+            window.editingThemeId = themeId;
+            
+            document.getElementById('themeNombre').value = tema.nombre;
+            document.getElementById('themeDescripcion').value = tema.descripcion;
+            document.getElementById('themeIcono').value = tema.icono;
+            document.getElementById('themeColor').value = tema.color;
+            document.getElementById('themeActivo').checked = tema.activo;
+            
+            // Actualizar título del formulario
+            const formTitle = document.querySelector('.theme-form h4');
+            if (formTitle) {
+                formTitle.textContent = '✏️ Editar Tema';
+            }
+        }
+
+        function cancelEditTheme() {
+            delete window.editingThemeId;
+            document.getElementById('themeForm').reset();
+            
+            const formTitle = document.querySelector('.theme-form h4');
+            if (formTitle) {
+                formTitle.textContent = '➕ Agregar Nuevo Tema';
+            }
+        }
+
+        function deleteTheme(themeId) {
+            if (!confirm('¿Estás seguro de eliminar este tema? Esta acción no se puede deshacer.')) {
+                return;
+            }
+            
+            // Verificar si hay preguntas asociadas al tema
+            const preguntas = JSON.parse(localStorage.getItem('serums_preguntas'));
+            const preguntasAsociadas = preguntas.filter(p => p.temaId === themeId);
+            
+            if (preguntasAsociadas.length > 0) {
+                if (!confirm(`Este tema tiene ${preguntasAsociadas.length} preguntas asociadas. ¿Deseas eliminar el tema y todas sus preguntas?`)) {
+                    return;
+                }
+                
+                // Eliminar preguntas asociadas
+                const nuevasPreguntas = preguntas.filter(p => p.temaId !== themeId);
+                localStorage.setItem('serums_preguntas', JSON.stringify(nuevasPreguntas));
+            }
+            
+            // Eliminar tema
+            const temas = JSON.parse(localStorage.getItem('serums_temas'));
+            const nuevosTemas = temas.filter(t => t.id !== themeId);
+            localStorage.setItem('serums_temas', JSON.stringify(nuevosTemas));
+            
+            alert('✅ Tema eliminado exitosamente');
+            loadAdminData();
+        }
+
+        // ==============================
+        // GESTIÓN DE PREGUNTAS
+        // ==============================
+
+        function renderAddQuestionForm() {
+            const temas = JSON.parse(localStorage.getItem('serums_temas'));
+            
+            return `
+                <form id="newQuestionForm" style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <div class="form-group">
+                        <label for="newPregunta">Pregunta *</label>
+                        <textarea id="newPregunta" rows="3" required style="width: 100%; padding: 10px;"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newTema">Tema *</label>
+                        <select id="newTema" required>
+                            <option value="">Selecciona un tema</option>
+                            ${temas.filter(t => t.activo).map(tema => `<option value="${tema.id}">${tema.nombre}</option>`).join('')}
+                        </select>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+                        <div class="form-group">
+                            <label>Opción A *</label>
+                            <input type="text" id="opcionA" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Opción B *</label>
+                            <input type="text" id="opcionB" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Opción C</label>
+                            <input type="text" id="opcionC">
+                        </div>
+                        <div class="form-group">
+                            <label>Opción D</label>
+                            <input type="text" id="opcionD">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="respuestaCorrecta">Respuesta Correcta *</label>
+                        <select id="respuestaCorrecta" required>
+                            <option value="">Selecciona la respuesta correcta</option>
+                            <option value="A">Opción A</option>
+                            <option value="B">Opción B</option>
+                            <option value="C">Opción C</option>
+                            <option value="D">Opción D</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dificultad">Dificultad</label>
+                        <select id="dificultad">
+                            <option value="baja">Baja</option>
+                            <option value="media" selected>Media</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="nav-btn primary">💾 Guardar Pregunta</button>
+                        <button type="button" class="nav-btn secondary" onclick="document.getElementById('addQuestionForm').style.display = 'none'">Cancelar</button>
+                    </div>
+                </form>
+            `;
+        }
+
+        function showAddQuestionForm() {
+            const form = document.getElementById('addQuestionForm');
+            form.style.display = 'block';
+            form.innerHTML = renderAddQuestionForm();
+            
+            // Agregar event listener al formulario
+            document.getElementById('newQuestionForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addNewQuestion();
+            });
+        }
+
+        function addNewQuestion() {
+            const pregunta = document.getElementById('newPregunta').value;
+            const temaId = parseInt(document.getElementById('newTema').value);
+            const opcionA = document.getElementById('opcionA').value;
+            const opcionB = document.getElementById('opcionB').value;
+            const opcionC = document.getElementById('opcionC').value;
+            const opcionD = document.getElementById('opcionD').value;
+            const respuestaCorrecta = document.getElementById('respuestaCorrecta').value;
+            const dificultad = document.getElementById('dificultad').value;
+            
+            if (!pregunta || !temaId || !opcionA || !opcionB || !respuestaCorrecta) {
+                alert('Por favor, completa todos los campos obligatorios');
+                return;
+            }
+            
+            // Crear array de opciones
+            const opciones = [
+                `A. ${opcionA}`,
+                `B. ${opcionB}`
+            ];
+            
+            if (opcionC) opciones.push(`C. ${opcionC}`);
+            if (opcionD) opciones.push(`D. ${opcionD}`);
+            
+            // Determinar respuesta correcta completa
+            let respuestaCompleta = '';
+            switch(respuestaCorrecta) {
+                case 'A': respuestaCompleta = `A. ${opcionA}`; break;
+                case 'B': respuestaCompleta = `B. ${opcionB}`; break;
+                case 'C': respuestaCompleta = `C. ${opcionC}`; break;
+                case 'D': respuestaCompleta = `D. ${opcionD}`; break;
+            }
+            
+            // Crear nueva pregunta
+            const newQuestion = {
+                id: Date.now(),
+                pregunta: pregunta,
+                opciones: opciones,
+                respuestaCorrecta: respuestaCompleta,
+                temaId: temaId,
+                dificultad: dificultad || 'media'
+            };
+            
+            // Guardar en localStorage
+            const questions = JSON.parse(localStorage.getItem('serums_preguntas'));
+            questions.push(newQuestion);
+            localStorage.setItem('serums_preguntas', JSON.stringify(questions));
+            
+            alert('✅ Pregunta agregada exitosamente');
+            document.getElementById('addQuestionForm').style.display = 'none';
+            loadAdminData();
+        }
+
+        function deleteQuestion(questionId) {
+            if (confirm('¿Estás seguro de eliminar esta pregunta?')) {
+                const questions = JSON.parse(localStorage.getItem('serums_preguntas'));
+                const filteredQuestions = questions.filter(q => q.id !== questionId);
+                localStorage.setItem('serums_preguntas', JSON.stringify(filteredQuestions));
+                loadAdminData();
+            }
+        }
+
+        function filterQuestionsByTheme() {
+            const themeId = document.getElementById('filterTheme').value;
+            window.filteredThemeId = themeId ? parseInt(themeId) : null;
+            loadAdminData();
+        }
+
+        function refreshQuestions() {
+            delete window.filteredThemeId;
+            document.getElementById('filterTheme').value = '';
+            loadAdminData();
+        }
+
+        // ==============================
+        // FUNCIONES DE PAGOS
+        // ==============================
+
+        function approvePayment(paymentId, userId) {
+            if (confirm('¿Estás seguro de aprobar este pago?')) {
+                // Actualizar estado del pago
+                const payments = JSON.parse(localStorage.getItem('serums_payments') || '[]');
+                const paymentIndex = payments.findIndex(p => p.id === paymentId);
+                
+                if (paymentIndex !== -1) {
+                    payments[paymentIndex].estado = 'aprobado';
+                    localStorage.setItem('serums_payments', JSON.stringify(payments));
+                }
+                
+                // Actualizar usuario
+                const users = JSON.parse(localStorage.getItem('serums_users') || '[]');
+                const userIndex = users.findIndex(u => u.id === userId);
+                
+                if (userIndex !== -1) {
+                    users[userIndex].pago_aprobado = true;
+                    users[userIndex].codigo_acceso = 'COD' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                    users[userIndex].intentos_restantes = 5;
+                    localStorage.setItem('serums_users', JSON.stringify(users));
+                }
+                
+                alert('✅ Pago aprobado exitosamente');
+                loadAdminData();
+            }
+        }
+
+        // ==============================
+        // FUNCIONES AUXILIARES
+        // ==============================
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        function saveUserData() {
+            localStorage.setItem('serums_user', JSON.stringify(currentUser));
+            
+            // Actualizar en lista de usuarios
+            const users = JSON.parse(localStorage.getItem('serums_users') || '[]');
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex] = currentUser;
+                localStorage.setItem('serums_users', JSON.stringify(users));
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('serums_user');
+            document.getElementById('userInfo').style.display = 'none';
+            loadRegisterForm();
+        }
+
+        // ==============================
+        // INICIALIZAR APLICACIÓN
+        // ==============================
+
+        // Función para acceder al panel de admin (acceso directo)
+        function accessAdmin() {
+            const password = prompt('Ingrese la contraseña de administrador:');
+            if (password === 'admin123') { // Contraseña simple para demo
+                loadAdminPanel();
+            } else {
+                alert('Contraseña incorrecta');
+            }
+        }
+
+        // Agregar botón de admin al header
+        document.addEventListener('DOMContentLoaded', function() {
+            const header = document.querySelector('.app-header');
+            const adminBtn = document.createElement('button');
+            adminBtn.textContent = '🔧 Admin';
+            adminBtn.style.background = 'var(--warning-color)';
+            adminBtn.style.color = 'white';
+            adminBtn.style.border = 'none';
+            adminBtn.style.padding = '8px 16px';
+            adminBtn.style.borderRadius = '5px';
+            adminBtn.style.cursor = 'pointer';
+            adminBtn.style.marginLeft = '10px';
+            adminBtn.onclick = accessAdmin;
+            
+            const userInfo = document.getElementById('userInfo');
+            if (userInfo) {
+                userInfo.appendChild(adminBtn);
+            }
+            
+            initApp();
+        });
+    </script>
+</body>
+</html>
